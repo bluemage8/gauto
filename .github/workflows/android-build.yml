@@ -27,10 +27,7 @@ jobs:
           sudo apt-get install -y libtool autoconf automake libtool-bin
           if ! grep -rq "LT_SYS_SYMBOL_USCORE" /usr/share/aclocal/ 2>/dev/null; then
             echo "Adding LT_SYS_SYMBOL_USCORE shim"
-            cat > /usr/share/aclocal/lt-underscore.m4 <<'M4EOF'
-AC_DEFUN([LT_SYS_SYMBOL_USCORE], [AC_PROG_CC])
-AC_DEFUN([LT_SYS_DLSYM_USCORE], [AC_PROG_CC])
-M4EOF
+            printf 'AC_DEFUN([LT_SYS_SYMBOL_USCORE], [AC_PROG_CC])\nAC_DEFUN([LT_SYS_DLSYM_USCORE], [AC_PROG_CC])\n' > /usr/share/aclocal/lt-underscore.m4
             echo "shim written"
           fi
 
