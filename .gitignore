@@ -1,0 +1,52 @@
+# APK / binaries
+*.apk
+*.zip
+pt/
+adb.exe
+platform-tools*
+
+# WSL build dirs
+.buildozer/
+buildwsl.log
+bwdone.log
+bwverb.log
+bw2.log
+build.log
+p4a_*.log
+apkdirect.log
+gradle*.log
+crash*.log
+crash*.txt
+
+# helper scripts (local only, not needed in repo)
+*.sh
+check*.py
+check*.sh
+find*.sh
+dl*.sh
+install*.sh
+patch_*.py
+run_*.sh
+launch*.sh
+watch*.sh
+verify*.sh
+rebuild_*.sh
+re3.sh
+rebuild_apk*.sh
+fixspec.sh
+copyapk.sh
+
+# caches / logs / data
+__pycache__/
+*.pyc
+*.csv
+*.json
+*.txt
+*.html
+*.log
+*.png
+*.whl
+*.loop.txt
+*.pyc
+
+# keep: main.py, webview_widget.py, buildozer.spec, .github/

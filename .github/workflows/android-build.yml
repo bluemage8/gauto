@@ -1,0 +1,33 @@
+# Build KivyMD Android APK on GitHub Actions
+# Requires: main.py, webview_widget.py, buildozer.spec at repo root
+name: android-apk
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install buildozer + cython + sh
+        run: |
+          python -m pip install --upgrade pip
+          pip install cython sh buildozer
+
+      - name: Build debug APK
+        run: |
+          buildozer android debug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gameauto-apk
+          path: bin/*.apk
