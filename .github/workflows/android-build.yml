@@ -24,12 +24,28 @@ jobs:
         run: |
           set -e
           sudo apt-get update
-          sudo apt-get install -y libtool autoconf automake libtool-bin
+          sudo apt-get install -y libtool autoconf automake libtool-bin python3-venv
           if ! grep -rq "LT_SYS_SYMBOL_USCORE" /usr/share/aclocal/ 2>/dev/null; then
             echo "Adding LT_SYS_SYMBOL_USCORE shim"
             printf 'AC_DEFUN([LT_SYS_SYMBOL_USCORE], [AC_PROG_CC])\nAC_DEFUN([LT_SYS_DLSYM_USCORE], [AC_PROG_CC])\n' > /usr/share/aclocal/lt-underscore.m4
             echo "shim written"
           fi
+
+      - name: Clone P4A master + patch build.py (venv pip corruption fix)
+        run: |
+          set -e
+          P4A_DIR=$HOME/.buildozer/android/platform/python-for-android
+          mkdir -p $HOME/.buildozer/android/platform
+          if [ ! -d "$P4A_DIR" ]; then
+            git clone --depth 1 --branch master https://github.com/kivy/python-for-android.git "$P4A_DIR"
+          fi
+          python3 patch_p4a.py "$P4A_DIR"
+
+      - name: Point spec at patched P4A
+        run: |
+          grep -q "p4a.source_dir" buildozer.spec 2>/dev/null || \
+            sed -i "/p4a.branch/a p4a.source_dir = \$HOME/.buildozer/android/platform/python-for-android" buildozer.spec
+          echo "spec now:"; cat buildozer.spec
 
       - name: Build debug APK (retries for transient network)
         env:
