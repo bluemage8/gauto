@@ -1,5 +1,4 @@
 # Build KivyMD Android APK on GitHub Actions
-# Requires: main.py, webview_widget.py, buildozer.spec at repo root
 name: android-apk
 
 on:
@@ -22,6 +21,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install cython sh buildozer
 
+      - name: Install build deps + provide LT_SYS_SYMBOL_USCORE macro for libffi
+        run: |
+          set -e
+          sudo apt-get update
+          sudo apt-get install -y libtool autoconf automake libtool-bin
+          # libtool >= 2.4.7 removed LT_SYS_SYMBOL_USCORE; libffi's configure.ac still uses it.
+          # Provide a no-op shim in the system aclocal dir (auto-included by autoreconf).
+          if ! grep -rq "LT_SYS_SYMBOL_USCORE" /usr/share/aclocal/ 2>/dev/null; then
+            echo "Adding LT_SYS_SYMBOL_USCORE shim"
+            cat > /usr/share/aclocal/lt-underscore.m4 <<'M4EOF'
+AC_DEFUN([LT_SYS_SYMBOL_USCORE], [AC_PROG_CC])
+AC_DEFUN([LT_SYS_DLSYM_USCORE], [AC_PROG_CC])
+M4EOF
+            echo "shim written"
+          fi
+
       - name: Build debug APK (with retries for transient 502 network errors)
         env:
           PIP_RETRIES: "10"
@@ -40,7 +55,7 @@ jobs:
             sleep 20
             try=$((try+1))
           done
-          if [ ! -f bin/*.apk ] && ! ls bin/*.apk >/dev/null 2>&1; then
+          if ! ls bin/*.apk >/dev/null 2>&1; then
             echo "=== NO APK after retries ==="
             ls -la bin/ 2>&1
             exit 1
