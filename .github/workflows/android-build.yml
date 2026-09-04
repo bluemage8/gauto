@@ -43,8 +43,9 @@ jobs:
 
       - name: Point spec at patched P4A
         run: |
+          P4A_ABS=$(echo "$HOME/.buildozer/android/platform/python-for-android" | sed "s|^$HOME|$HOME|")
           grep -q "p4a.source_dir" buildozer.spec 2>/dev/null || \
-            sed -i "/p4a.branch/a p4a.source_dir = \$HOME/.buildozer/android/platform/python-for-android" buildozer.spec
+            sed -i "s|^p4a.branch = master|p4a.branch = master\np4a.source_dir = $HOME/.buildozer/android/platform/python-for-android|" buildozer.spec
           echo "spec now:"; cat buildozer.spec
 
       - name: Build debug APK (retries for transient network)
