@@ -48,18 +48,20 @@ jobs:
             sed -i "s|^p4a.branch = master|p4a.branch = master\np4a.source_dir = $HOME/.buildozer/android/platform/python-for-android|" buildozer.spec
           echo "spec now:"; cat buildozer.spec
 
-      - name: Build debug APK (retries for transient network)
+      - name: Build debug APK (retries for transient GitHub egress 502/504)
         env:
-          PIP_RETRIES: "10"
-          PIP_TIMEOUT: "60"
+          PIP_RETRIES: "20"
+          PIP_TIMEOUT: "120"
+          PIP_DEFAULT_TIMEOUT: "120"
         run: |
           try=1
-          while [ $try -le 3 ]; do
+          while [ $try -le 6 ]; do
             echo "=== buildozer attempt $try ==="
             if buildozer android debug; then
               echo "BUILD_OK"; break
             fi
-            echo "attempt $try failed, retrying in 20s..."; sleep 20
+            echo "attempt $try failed (likely transient 502/504), retrying in 60s..."
+            sleep 60
             try=$((try+1))
           done
           if ! ls bin/*.apk >/dev/null 2>&1; then
