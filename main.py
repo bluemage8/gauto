@@ -138,3 +138,5 @@ if __name__ == "__main__":
     GameApp().run()
 
 # rebuild trigger 2026090421235116
+
+# full-build trigger 2026090421271214
