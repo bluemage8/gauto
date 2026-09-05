@@ -66,7 +66,7 @@ class GameApp(MDApp):
 
         def do_back(*_):
             if self.webview.can_go_back():
-                self.webview.goBack()
+                self.webview.go_back()
             else:
                 self.status.text = "没有上一页"
 
@@ -136,7 +136,3 @@ class GameApp(MDApp):
 
 if __name__ == "__main__":
     GameApp().run()
-
-# rebuild trigger 2026090421235116
-
-# full-build trigger 2026090421271214
