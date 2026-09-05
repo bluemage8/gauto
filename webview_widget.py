@@ -19,7 +19,6 @@ import json
 import sys
 
 from kivy.uix.widget import Widget
-from kivy.event import EventDispatcher
 from kivy.clock import Clock
 from kivy.utils import platform as kplatform
 
@@ -30,15 +29,14 @@ except NameError:
     IS_ANDROID = (kplatform == "android")
 
 
-class WebView(Widget, EventDispatcher):
+class WebView(Widget):
     """Kivy widget hosting an Android WebView (or a desktop stub)."""
-
-    on_loaded = EventDispatcher.create("on_loaded")
-    on_page_error = EventDispatcher.create("on_page_error")
-    on_js_message = EventDispatcher.create("on_js_message")
 
     def __init__(self, url: str = "about:blank", **kwargs):
         super().__init__(**kwargs)
+        self.register_event_type("on_loaded")
+        self.register_event_type("on_page_error")
+        self.register_event_type("on_js_message")
         self.url = url
         self._wv = None          # java WebView
         self._ctx = None
@@ -46,6 +44,15 @@ class WebView(Widget, EventDispatcher):
         self._req_id = 0
         self._pending = {}       # mid -> cb
         self.init_backend()
+
+    def on_loaded(self, *largs):
+        pass
+
+    def on_page_error(self, *largs):
+        pass
+
+    def on_js_message(self, *largs):
+        pass
 
     # ------------------------------------------------------------------
     def init_backend(self):
