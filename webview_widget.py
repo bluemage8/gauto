@@ -33,9 +33,9 @@ except NameError:
 class WebView(Widget, EventDispatcher):
     """Kivy widget hosting an Android WebView (or a desktop stub)."""
 
-    on_loaded = EventDispatcher.dispatch("on_loaded")
-    on_page_error = EventDispatcher.dispatch("on_page_error")
-    on_js_message = EventDispatcher.dispatch("on_js_message")
+    on_loaded = EventDispatcher.create("on_loaded")
+    on_page_error = EventDispatcher.create("on_page_error")
+    on_js_message = EventDispatcher.create("on_js_message")
 
     def __init__(self, url: str = "about:blank", **kwargs):
         super().__init__(**kwargs)
